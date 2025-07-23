@@ -1,26 +1,67 @@
+- name: Create a .backups dir if it does not exist
+  ansible.builtin.file:
+    path: "{{ backups }}"
+    state: directory
+    mode: '0755'
 
+#----------------
+# ZSH
+#----------------
+
+- name: Touch ~/.zshrc
+  ansible.builtin.file:
+    path: "{{ zshrc }}"
+    state: touch
+    mode: '0644'
+
+- name: Read zshrc.conf into a variable
+  set_fact:
+    zshrc_contents: "{{ lookup('file', 'templates/zshrc.j2') }}"
+
+- name: Insert/Update ~/.zshrc.conf
+  ansible.builtin.blockinfile:
+    path: "{{ zshrc }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ zshrc_contents }}
+
+- name: Print the gateway for each host when defined
+  ansible.builtin.debug:
+    msg: "Result: {{ zshrc }}"
+
+- name: Move zshrc backup
+  ansible.builtin.shell: "mv {{ zshrc }}.*~ {{ backups }}/"
+  ignore_errors: true
+
+#----------------
 # GITCONFIG
+#----------------
 
 - name: Touch ~/.gitconfig
   ansible.builtin.file:
-    path: "{{ home }}/.gitconfig"
+    path: "{{ git_config }}"
     state: touch
     mode: '0600'
 
 - name: Read gitconfig into a variable
   set_fact:
-    gitconfig: "{{ lookup('file', 'templates/gitconfig.j2') }}"
+    gitconfig_contents: "{{ lookup('file', 'templates/gitconfig.j2') }}"
 
 - name: Insert/Update ~/.gitconfig
   ansible.builtin.blockinfile:
-    path: "{{ home }}/.gitconfig"
+    path: "{{ git_config }}"
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     backup: yes
     block: |
-      {{ gitconfig }}
+      {{ gitconfig_contents }}
 
+- name: Move gitconfig backup
+  shell: "mv {{ git_config }}.*~ {{ backups }}/"
 
+#----------------
 # VIM
+#----------------
 
 - name: Touch ~/.vimrc
   ansible.builtin.file:
@@ -30,32 +71,40 @@
 
 - name: Read vimrc into a variable
   set_fact:
-    vimrc: "{{ lookup('file', 'templates/vimrc.j2') }}"
+    vimrc_contents: "{{ lookup('file', 'templates/vimrc.j2') }}"
 
 - name: Insert/Update ~/.vimrc
   ansible.builtin.blockinfile:
-    path: "{{ home }}/.vimrc"
+    path: "{{ vimrc }}"
     marker: "\" {mark} ANSIBLE MANAGED BLOCK"
     backup: yes
     block: |
-      {{ vimrc }}
+      {{ vimrc_contents }}
 
+- name: Move vimrc backup
+  shell: "mv {{ vimrc }}.*~ {{ backups }}/"
+
+#----------------
 # TMUX
+#----------------
 
 - name: Touch ~/.tmux.conf
   ansible.builtin.file:
-    path: "{{ home }}/.tmux.conf"
+    path: "{{ tmux_conf }}"
     state: touch
     mode: '0644'
 
 - name: Read tmux.conf into a variable
   set_fact:
-    tmux: "{{ lookup('file', 'templates/tmux.conf.j2') }}"
+    tmux_contents: "{{ lookup('file', 'templates/tmux.conf.j2') }}"
 
 - name: Insert/Update ~/.tmux.conf
   ansible.builtin.blockinfile:
-    path: "{{ home }}/.tmux.conf"
+    path: "{{ tmux_conf }}"
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     backup: yes
     block: |
-      {{ tmux }}
+      {{ tmux_contents }}
+
+- name: Move tmux backup
+  shell: "mv {{ tmux_conf }}.*~ {{ backups }}/"

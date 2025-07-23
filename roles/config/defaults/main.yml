@@ -1,0 +1,5 @@
+backups: "{{ home }}/.backups"
+zshrc: "{{ home }}/.zshrc"
+vimrc: "{{ home }}/.vimrc"
+tmux_conf: "{{ home }}/.tmux.conf"
+git_config: "{{ home }}/.gitconfig"
