@@ -1,0 +1,16 @@
+
+- name: Read gitconfig into a variable
+  set_fact:
+    gitconfig: "{{ lookup('file', 'templates/gitconfig.j2') }}"
+
+- name: Print the contents for each host when defined
+  ansible.builtin.debug:
+    msg: "Contents: {{ gitconfig }}"
+
+- name: Insert/Update gitconfig
+  ansible.builtin.blockinfile:
+    path: "{{ home }}/.gitconfig"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ gitconfig }}
