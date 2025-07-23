@@ -3,3 +3,6 @@
     -  role: config
        tags: [ 'config']
 
+    -  role: android
+       tags: [ 'android']
+

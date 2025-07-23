@@ -1,0 +1,28 @@
+#----------------
+# SHELL
+#----------------
+
+- name: Touch ~/.zshrc
+  ansible.builtin.file:
+    path: "{{ zshrc }}"
+    state: touch
+    mode: '0644'
+
+- name: Create block content from template
+  ansible.builtin.template:
+    src: templates/android.conf.j2
+    dest: "/tmp/android.conf"
+
+- name: Read android.conf into a variable
+  set_fact:
+    android_contents: "{{ lookup('file', '/tmp/android.conf') }}"
+
+- name: Insert/Update ~/.zshrc.conf
+  ansible.builtin.blockinfile:
+    append_newline: true
+    path: "{{ zshrc }}"
+    marker: "# {mark} ANSIBLE ANDROID MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ android_contents }}
+
