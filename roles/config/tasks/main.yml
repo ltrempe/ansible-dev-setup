@@ -1,7 +1,7 @@
 
 # GITCONFIG
 
-- name: Touch .gitconfig
+- name: Touch ~/.gitconfig
   ansible.builtin.file:
     path: "{{ home }}/.gitconfig"
     state: touch
@@ -11,7 +11,7 @@
   set_fact:
     gitconfig: "{{ lookup('file', 'templates/gitconfig.j2') }}"
 
-- name: Insert/Update gitconfig
+- name: Insert/Update ~/.gitconfig
   ansible.builtin.blockinfile:
     path: "{{ home }}/.gitconfig"
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
@@ -20,9 +20,9 @@
       {{ gitconfig }}
 
 
-# VI
+# VIM
 
-- name: Touch .vimrc
+- name: Touch ~/.vimrc
   ansible.builtin.file:
     path: "{{ home }}/.vimrc"
     state: touch
@@ -32,10 +32,10 @@
   set_fact:
     vimrc: "{{ lookup('file', 'templates/vimrc.j2') }}"
 
-- name: Insert/Update gitconfig
+- name: Insert/Update ~/.vimrc
   ansible.builtin.blockinfile:
     path: "{{ home }}/.vimrc"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    marker: "\" {mark} ANSIBLE MANAGED BLOCK"
     backup: yes
     block: |
       {{ vimrc }}
