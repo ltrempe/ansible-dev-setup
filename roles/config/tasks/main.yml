@@ -26,14 +26,6 @@
     block: |
       {{ zshrc_contents }}
 
-- name: Print the gateway for each host when defined
-  ansible.builtin.debug:
-    msg: "Result: {{ zshrc }}"
-
-- name: Move zshrc backup
-  ansible.builtin.shell: "mv {{ zshrc }}.*~ {{ backups }}/"
-  ignore_errors: true
-
 #----------------
 # GITCONFIG
 #----------------
@@ -55,9 +47,6 @@
     backup: yes
     block: |
       {{ gitconfig_contents }}
-
-- name: Move gitconfig backup
-  shell: "mv {{ git_config }}.*~ {{ backups }}/"
 
 #----------------
 # VIM
@@ -81,9 +70,6 @@
     block: |
       {{ vimrc_contents }}
 
-- name: Move vimrc backup
-  shell: "mv {{ vimrc }}.*~ {{ backups }}/"
-
 #----------------
 # TMUX
 #----------------
@@ -105,6 +91,3 @@
     backup: yes
     block: |
       {{ tmux_contents }}
-
-- name: Move tmux backup
-  shell: "mv {{ tmux_conf }}.*~ {{ backups }}/"
