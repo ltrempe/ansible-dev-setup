@@ -39,3 +39,23 @@
     backup: yes
     block: |
       {{ vimrc }}
+
+# TMUX
+
+- name: Touch ~/.tmux.conf
+  ansible.builtin.file:
+    path: "{{ home }}/.tmux.conf"
+    state: touch
+    mode: '0644'
+
+- name: Read tmux.conf into a variable
+  set_fact:
+    tmux: "{{ lookup('file', 'templates/tmux.conf.j2') }}"
+
+- name: Insert/Update ~/.tmux.conf
+  ansible.builtin.blockinfile:
+    path: "{{ home }}/.tmux.conf"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ tmux }}
