@@ -1,11 +1,16 @@
 
+# GITCONFIG
+
+- name: Touch .gitconfig
+  ansible.builtin.file:
+    path: "{{ home }}/.gitconfig"
+    state: touch
+    mode: u+rw,g-wx,o-rwx
+    mode: '0600'
+
 - name: Read gitconfig into a variable
   set_fact:
     gitconfig: "{{ lookup('file', 'templates/gitconfig.j2') }}"
-
-- name: Print the contents for each host when defined
-  ansible.builtin.debug:
-    msg: "Contents: {{ gitconfig }}"
 
 - name: Insert/Update gitconfig
   ansible.builtin.blockinfile:
