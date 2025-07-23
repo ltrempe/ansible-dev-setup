@@ -5,7 +5,6 @@
   ansible.builtin.file:
     path: "{{ home }}/.gitconfig"
     state: touch
-    mode: u+rw,g-wx,o-rwx
     mode: '0600'
 
 - name: Read gitconfig into a variable
@@ -19,3 +18,24 @@
     backup: yes
     block: |
       {{ gitconfig }}
+
+
+# VI
+
+- name: Touch .vimrc
+  ansible.builtin.file:
+    path: "{{ home }}/.vimrc"
+    state: touch
+    mode: '0644'
+
+- name: Read vimrc into a variable
+  set_fact:
+    vimrc: "{{ lookup('file', 'templates/vimrc.j2') }}"
+
+- name: Insert/Update gitconfig
+  ansible.builtin.blockinfile:
+    path: "{{ home }}/.vimrc"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ vimrc }}

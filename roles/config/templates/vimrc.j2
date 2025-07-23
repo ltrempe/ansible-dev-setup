@@ -1,0 +1,131 @@
+syntax on
+syntax enable                  " Enable syntax highlighting.
+filetype plugin indent on      " Activate auto-indenting for all filetypes.
+
+set term=xterm-256color
+set t_Co=256
+set fileformat=unix
+set incsearch
+set backspace=2
+set ignorecase
+set hls
+set complete=.,w,b,u,t,i
+set number
+set nocursorline      " Turns off cursorline
+set title             " Sets the title of the putty terminal to the file you are editing
+set tabstop=4         " Sets the tab key to translate to 4 spaces
+set shiftwidth=4      " Number of spaces to use for each step of the "autoindent"
+set expandtab         " In Insert mode: Use the appropriate number of spaces to insert a
+                      "    <Tab>.  Spaces are used in indents with the '>' and '<' commands
+
+set autoindent        " Enables autoindent
+set smartindent       " Do smart autoindenting when starting a new line
+set cindent           " Get the amount of indent for line {lnum} according the C indenting rules
+
+set showmatch         " When a bracket is inserted, briefly jump to the matching one e.g. (), {}
+set number            " shows line numbers
+set nowrap            " Tells vim not to wrap lines
+
+set visualbell        " Use visual bell instead of beeping
+set ignorecase        " tells vim to ignore case when searching or pattern matching
+set incsearch         " When searching "/" vim will automatically jump to search results while typing
+set winheight=70      " Sets the height of the window for the active screen during a horizontal split
+set winwidth=70       " Sets the width of the window for the active screen during a vertical split
+
+set nocompatible      "
+
+set directory=$HOME/.backups//     " Stop cluttering my working directories with .swp files!
+set backupdir=$HOME/.backups//     " Move all backups into one directory, ~/.backups.
+
+set showcmd           " Show command in statusline as it's being typed
+set ruler             " Show row, col and % progress through file
+set laststatus=2      " Always show filename
+set hidden            " Let us move between buffers without writing them.
+					  " Don't :q! or :qa! frivolously!
+
+" Key binding
+let mapleader = ","
+
+" Maps <F8> to drop out of vim and start a shell, when you "exit" the shell you resume your vim doc
+map <F8> :sh<Cr>
+" Maps <f5> to change active document when spliting multiple documents
+map <f5> <C-w><C-w>
+" toggles the highlighting of the searched expression
+map <f2> :set hlsearch!<CR>
+
+" For easy editing of .vimrc
+nnoremap ,v :source $HOME/.vimrc<CR>
+nnoremap ,e :edit $HOME/.vimrc<CR>
+
+" Turn search match highlighting on/off
+nnoremap ; :set invhlsearch<CR>
+
+" Change indent continuously (just keep hitting < or >)
+vmap < <gv
+vmap > >gv
+
+" Turns camelCase into camel_case
+vnoremap ,case :s/\v\C(([a-z]+)([A-Z]))/\2_\l\3/g
+nmap <F6> :call DiffWithFileFromDisk()<cr>
+
+" Example of setting a color scheme for a single filetype
+" autocmd Filetype javascript color dante
+
+inoremap {<Cr> {<Cr>}<C-O>O
+
+map <C-DOWN> <C-W><DOWN>
+map <C-UP> <C-W><UP>
+map <C-LEFT> <C-W><LEFT>
+map <C-RIGHT> <C-W><RIGHT>
+
+map <F2> :set hlsearch!<CR>
+map <F3> :%s/<C-V><CR>//g<Cr>
+map <F4> :call ClearWhiteSpace()<cr>
+map <F5> <C-w><C-w>
+
+function ClearWhiteSpace()
+    let save_cursor = getpos(".")
+    %s/\s\+$//e
+    call setpos(".", save_cursor)
+endfunction
+
+highlight ExtraWhitespace ctermbg=red guibg=red
+au ColorScheme * highlight ExtraWhitespace guibg=red
+au BufEnter * match ExtraWhitespace /\s\+$/
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhiteSpace /\s\+$/
+
+" deleate extra white spaces on save
+au BufWritePre * call ClearWhiteSpace()
+
+au BufRead,BufNewFile *.xml set filetype=xml
+au BufNewFile,BufRead *.java setlocal filetype=java
+
+"" auto complete block closure and set cursor inside indented in
+inoremap {<CR> {<CR>}<C-O>O<TAB>
+
+function! DiffWithFileFromDisk()
+    let filename=expand('%')
+    let diffname = filename.'.fileFromBuffer'
+    exec 'saveas! '.diffname
+    diffthis
+    vsplit
+    exec 'edit '.filename
+    diffthis
+endfunction
+
+function! GreenBar(message)
+    hi GreenBar ctermfg=white ctermbg=green guibg=green
+    echohl GreenBar
+    echon repeat(" ",&columns)
+    echohl
+    echo a:message
+endfunction
+
+function! RedBar(message)
+    hi RedBar ctermfg=white ctermbg=red guibg=red
+    echohl RedBar
+    echon repeat(" ",&columns)
+    echohl
+    echo a:message
+endfunction
