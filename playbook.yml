@@ -6,3 +6,5 @@
     -  role: android
        tags: [ 'android']
 
+    -  role: brew
+       tags: [ 'brew']
