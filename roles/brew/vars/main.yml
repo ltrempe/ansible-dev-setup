@@ -4,6 +4,7 @@ brew_packages:
   - jq
   - the_silver_searcher
   - tmux
+  - moreutils
   - tmuxinator
   - displayplacer
 install_homebrew_if_missing: false
