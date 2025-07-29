@@ -1,0 +1,6 @@
+asdf_plugins:
+  - java
+asdf_versions:
+  - name: java
+    versions: [ openjdk-17.0.2 ]
+

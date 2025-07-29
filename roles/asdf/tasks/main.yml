@@ -1,0 +1,45 @@
+---
+
+- name: Check if ASDF exists at a specific path
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/asdf
+  register: asdf_installed
+
+- name: Check if brew is installed
+  ansible.builtin.command: which brew
+  register: brew_installed
+  ignore_errors: true  # Prevents playbook failure if command not found
+  changed_when: false  # Ensures task is not marked as changed
+  when: not asdf_installed.stat.exists
+
+- ansible.builtin.debug:
+    msg: "Brew is not installed! {{ brew_installed }}"
+  when: not asdf_installed.stat.exists and not brew_installed == 0
+
+- name: Install ASDF if missing
+  ansible.builtin.command: brew install asdf
+  when: not asdf_installed.stat.exists
+
+- name: Install ASDF plugins
+  ansible.builtin.command: brew install asdf
+  when: not asdf_installed.stat.exists
+
+- name: Add plugin
+  ansible.builtin.command: asdf plugin add {{ item }}
+  loop: "{{ asdf_plugins }}"
+
+- name: Install versions
+  ansible.builtin.command: asdf install {{ item.0.name }} {{ item.1 }}
+  loop: "{{ asdf_versions | subelements('versions') }}"
+
+- name: Read ansible.conf into a variable
+  set_fact:
+    asdf_contents: "{{ lookup('file', 'templates/asdf.j2') }}"
+
+- name: Insert/Update ~/.zshrc
+  ansible.builtin.blockinfile:
+    path: "{{ zshrc  }}"
+    marker: "# {mark} ASDF - ANSIBLE MANAGED BLOCK"
+    backup: yes
+    block: |
+      {{ asdf_contents }}
