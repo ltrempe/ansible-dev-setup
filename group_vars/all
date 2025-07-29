@@ -1,5 +1,6 @@
 home: "{{ lookup('env', 'HOME') }}"
 zshrc: "{{ home }}/.zshrc"
 vimrc: "{{ home }}/.vimrc"
+bin: "{{ home }}/bin"
 tmux_conf: "{{ home }}/.tmux.conf"
 git_config: "{{ home }}/.gitconfig"
